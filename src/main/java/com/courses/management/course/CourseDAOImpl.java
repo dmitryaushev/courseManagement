@@ -1,6 +1,5 @@
 package com.courses.management.course;
 
-import com.courses.management.common.DataAccessObject;
 import com.courses.management.common.DatabaseConnector;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAOImpl implements CourseDAO {
@@ -21,6 +21,8 @@ public class CourseDAOImpl implements CourseDAO {
             "VALUES(?, ?);";
     private final static String GET_BY_ID = "SELECT * FROM course WHERE id = ?;";
     private final static String GET_BY_TITLE = "SELECT * FROM course WHERE title = ?;";
+    private static final String GET_ALL = "SELECT * FROM course;";
+
 
 
     @Override
@@ -73,7 +75,24 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public List<Course> getAll() {
-        return null;
+
+        List<Course> coursesList = new ArrayList<>();
+
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_ALL)) {
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+
+                Course course = new Course();
+                course.setId(resultSet.getInt("id"));
+                course.setTitle(resultSet.getString("title"));
+                course.setCourseStatus(CourseStatus.getCourseStatus(resultSet.getString("status")).get());
+                coursesList.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return coursesList;
     }
 
     @Override
