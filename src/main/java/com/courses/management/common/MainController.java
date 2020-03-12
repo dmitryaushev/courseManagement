@@ -2,10 +2,7 @@ package com.courses.management.common;
 
 import com.courses.management.common.commands.Exit;
 import com.courses.management.common.commands.Help;
-import com.courses.management.course.CreateCourse;
-import com.courses.management.course.FindAllCourses;
-import com.courses.management.course.FindCourseByID;
-import com.courses.management.course.FindCourseByTitle;
+import com.courses.management.course.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,6 +21,8 @@ public class MainController {
                 new FindCourseByID(view),
                 new FindCourseByTitle(view),
                 new FindAllCourses(view),
+                new UpdateCourse(view),
+                new UpdateCourse(view),
                 new Help(view),
                 new Exit(view)
         );

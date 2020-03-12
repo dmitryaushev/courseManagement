@@ -22,7 +22,7 @@ public class CourseDAOImpl implements CourseDAO {
     private final static String GET_BY_ID = "SELECT * FROM course WHERE id = ?;";
     private final static String GET_BY_TITLE = "SELECT * FROM course WHERE title = ?;";
     private static final String GET_ALL = "SELECT * FROM course;";
-
+    private final static String UPDATE = "UPDATE course SET title = ?, status = ? WHERE id = ?;";
 
 
     @Override
@@ -41,7 +41,17 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public void update(Course course) {
+        LOG.debug(String.format("update: course.title=%s", course.getTitle()));
 
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(UPDATE)) {
+
+            statement.setString(1, course.getTitle());
+            statement.setString(2, course.getCourseStatus().getStatus());
+            statement.setInt(3, course.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
