@@ -39,12 +39,8 @@ public class UpdateCourse implements Command {
                 return;
             }
 
-        List<String> courseStatusList = Arrays.stream(CourseStatus.values())
-                .map(CourseStatus::getStatus)
-                .collect(Collectors.toList());
-
         view.write("Choose a course status");
-        courseStatusList.forEach(System.out::println);
+        Arrays.stream(CourseStatus.values()).forEach(System.out::println);
         String status = view.read();
 
         Course course = new Course();
