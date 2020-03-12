@@ -4,4 +4,5 @@ import com.courses.management.common.DataAccessObject;
 
 public interface CourseDAO extends DataAccessObject<Course> {
     Course get(String title);
+    void delete(String title);
 }

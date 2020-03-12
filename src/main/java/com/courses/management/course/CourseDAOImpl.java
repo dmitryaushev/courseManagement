@@ -23,6 +23,8 @@ public class CourseDAOImpl implements CourseDAO {
     private final static String GET_BY_TITLE = "SELECT * FROM course WHERE title = ?;";
     private static final String GET_ALL = "SELECT * FROM course;";
     private final static String UPDATE = "UPDATE course SET title = ?, status = ? WHERE id = ?;";
+    private final static String DELETE_BY_ID = "DELETE FROM course WHERE id = ?;";
+    private final static String DELETE_BY_TITLE = "DELETE FROM course WHERE title = ?;";
 
 
     @Override
@@ -57,6 +59,23 @@ public class CourseDAOImpl implements CourseDAO {
     @Override
     public void delete(int id) {
 
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE_BY_ID)) {
+            statement.setInt(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(String title) {
+
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(DELETE_BY_TITLE)) {
+            statement.setString(1, title);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -76,6 +95,30 @@ public class CourseDAOImpl implements CourseDAO {
                 course.setCourseStatus(CourseStatus.getCourseStatus(s).get());
             } else
                 LOG.debug(String.format("wrong input: course.id = %d", id));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return course;
+    }
+
+    @Override
+    public Course get(String title) {
+        LOG.debug(String.format("find: course.title = %s", title));
+
+        Course course = new Course();
+
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_BY_TITLE)) {
+            statement.setString(1, title);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                course.setId(resultSet.getInt("id"));
+                course.setTitle(title);
+                String s = resultSet.getString("status");
+                course.setCourseStatus(CourseStatus.getCourseStatus(s).get());
+            } else
+                LOG.debug(String.format("wrong input: course.title = %s", title));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,27 +148,4 @@ public class CourseDAOImpl implements CourseDAO {
         return coursesList;
     }
 
-    @Override
-    public Course get(String title) {
-        LOG.debug(String.format("find: course.title = %s", title));
-
-        Course course = new Course();
-
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_BY_TITLE)) {
-            statement.setString(1, title);
-
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                course.setId(resultSet.getInt("id"));
-                course.setTitle(title);
-                String s = resultSet.getString("status");
-                course.setCourseStatus(CourseStatus.getCourseStatus(s).get());
-            } else
-                LOG.debug(String.format("wrong input: course.title = %s", title));
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return course;
-    }
 }

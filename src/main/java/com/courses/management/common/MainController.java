@@ -23,6 +23,7 @@ public class MainController {
                 new FindAllCourses(view),
                 new UpdateCourse(view),
                 new UpdateCourse(view),
+                new DeleteCourse(view),
                 new Help(view),
                 new Exit(view)
         );
