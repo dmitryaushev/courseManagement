@@ -27,6 +27,7 @@ public class Help implements Command {
         view.write("find_all_courses        | find all courses");
         view.write("update_course           | update course");
         view.write("delete_course           | delete course");
+        view.write("create_user             | create a user");
         view.write("find_user_by_email      | find user by email");
         view.write("exit                    | exit application");
         view.write("-------------------------------------------------");

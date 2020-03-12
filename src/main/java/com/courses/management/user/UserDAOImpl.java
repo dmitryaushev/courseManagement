@@ -17,10 +17,25 @@ public class UserDAOImpl implements UserDAO {
     private HikariDataSource dataSource = DatabaseConnector.getConnector();
     private final static Logger LOG = LogManager.getLogger(UserDAOImpl.class);
 
+    private final static String INSERT = "INSERT INTO users(first_name, last_name, email, user_role, status, course_id) " +
+            "VALUES (?, ?, ?, ?, ?, ?);";
+
     private final static String GET_BY_EMAIL = "SELECT * FROM users where email = ?;";
 
     @Override
     public void create(User user) {
+
+        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(INSERT)) {
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getUserRole().getRole());
+            statement.setString(5, user.getUserStatus().getStatus());
+            statement.setInt(6, user.getCourse().getId());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
