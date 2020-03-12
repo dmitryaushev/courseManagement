@@ -20,6 +20,7 @@ public class MainController {
                 new CreateCourse(view),
                 new FindCourseByID(view),
                 new FindCourseByTitle(view),
+                new FindCoursesByStatus(view),
                 new FindAllCourses(view),
                 new UpdateCourse(view),
                 new UpdateCourse(view),
