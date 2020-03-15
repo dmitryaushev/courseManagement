@@ -1,6 +1,7 @@
 package com.courses.management.course;
 
 import com.courses.management.common.DatabaseConnector;
+import com.courses.management.common.exceptions.SQLCourseException;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +20,8 @@ public class CourseDAOImpl implements CourseDAO {
 
     private final static String INSERT = "INSERT INTO course(title, status) " +
             "VALUES(?, ?);";
-    private final static String GET_BY_ID = "SELECT * FROM course WHERE id = ?;";
-    private final static String GET_BY_TITLE = "SELECT * FROM course WHERE title = ?;";
+    private final static String GET_BY_ID = "SELECT id, title, status FROM course WHERE id = ?;";
+    private final static String GET_BY_TITLE = "SELECT id, title, status FROM course WHERE title = ?;";
     private static final String GET_ALL = "SELECT * FROM course;";
     private static final String GET_ALL_BY_STATUS = "SELECT * FROM course WHERE status = ?;";
     private final static String UPDATE = "UPDATE course SET title = ?, status = ? WHERE id = ?;";
@@ -29,9 +30,9 @@ public class CourseDAOImpl implements CourseDAO {
 
 
     @Override
-    public void create(Course course) {
-        LOG.debug(String.format("create: course.title=%s", course.getTitle()));
+    public void create(Course course)  {
 
+        LOG.debug(String.format("create: course.title=%s", course.getTitle()));
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT)) {
             statement.setString(1, course.getTitle());
@@ -39,6 +40,7 @@ public class CourseDAOImpl implements CourseDAO {
             statement.execute();
         } catch (SQLException e) {
             LOG.error(String.format("create: course.title=%s", course.getTitle()), e);
+            throw new SQLCourseException("Error occurred when find a course");
         }
     }
 
@@ -105,26 +107,16 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public Course get(String title) {
+
         LOG.debug(String.format("find: course.title = %s", title));
-
-        Course course = new Course();
-
         try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_BY_TITLE)) {
             statement.setString(1, title);
-
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                course.setId(resultSet.getInt("id"));
-                course.setTitle(title);
-                String s = resultSet.getString("status");
-                course.setCourseStatus(CourseStatus.getCourseStatus(s).get());
-            } else
-                LOG.debug(String.format("wrong input: course.title = %s", title));
-
+            return mapCourse(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(String.format("get: course.title=%s", title), e);
+            throw new SQLCourseException("Error occurred when find a course");
         }
-        return course;
     }
 
     @Override
@@ -171,6 +163,18 @@ public class CourseDAOImpl implements CourseDAO {
         }
 
         return coursesList;
+    }
+
+    private Course mapCourse(ResultSet rs) throws SQLException {
+
+        if (rs.next()) {
+            Course course = new Course();
+            course.setId(rs.getInt("id"));
+            course.setTitle(rs.getString("title"));
+            course.setCourseStatus(CourseStatus.getCourseStatus(rs.getString("status")).get());
+            return course;
+        }
+        return null;
     }
 
 }
