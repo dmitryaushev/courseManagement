@@ -6,15 +6,15 @@ import org.apache.logging.log4j.Logger;
 public class InputString {
 
     private static final Logger LOG = LogManager.getLogger(InputString.class);
-    private String command;
+    private String inputString;
 
-    public InputString(String command) {
-        this.command = command;
+    public InputString(String inputString) {
+        this.inputString = inputString;
     }
 
-    public void validateParameters(String inputString) {
-        int inputLength = getParametersSize(inputString);
-        int commandLength = getLength();
+    public void validateParameters(String command) {
+        int commandLength = getParametersSize(command);
+        int inputLength = getLength();
         if(inputLength != commandLength) {
             LOG.error(String.format("Invalid number of parameters separated by |, expected %s, but was %s"
                     , commandLength, inputLength));
@@ -23,11 +23,11 @@ public class InputString {
     }
 
     public int getLength() {
-        return getParametersSize(command);
+        return getParametersSize(inputString);
     }
 
     public String[] getParameters() {
-        return command.split("\\|");
+        return inputString.split("\\|");
     }
 
     private int getParametersSize(String command) {
