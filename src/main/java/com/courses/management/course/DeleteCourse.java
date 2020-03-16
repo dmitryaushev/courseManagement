@@ -2,8 +2,7 @@ package com.courses.management.course;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
-import org.apache.commons.lang3.math.NumberUtils;
-
+import com.courses.management.common.commands.util.InputString;
 
 public class DeleteCourse implements Command {
 
@@ -17,20 +16,22 @@ public class DeleteCourse implements Command {
 
     @Override
     public String command() {
-        return "delete_course";
+        return "delete_course|title";
     }
 
     @Override
-    public void process() {
+    public void process(InputString input) {
 
-        view.write("Enter id or title");
-        String input = view.read();
+        input.validateParameters(command());
+        String title = input.getParameters()[1];
+        Course course = courseDAO.get(title);
+        if (course == null || course.getTitle() == null) {
+            throw new IllegalArgumentException(String.format("Course with title %s not exists", title));
+        }
 
-        if(NumberUtils.isNumber(input))
-            courseDAO.delete(Integer.parseInt(input));
-        else
-            courseDAO.delete(input);
+        course.setCourseStatus(CourseStatus.DELETED);
+        courseDAO.update(course);
+        view.write("Course moved to deleted");
 
-        view.write("Course deleted");
     }
 }
