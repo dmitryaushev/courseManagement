@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface CourseDAO extends DataAccessObject<Course> {
     Course get(String title);
-    void delete(String title);
     List<Course> getAllByStatus(String status);
 }
