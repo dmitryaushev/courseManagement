@@ -21,15 +21,11 @@ public class MainController {
         this.view = view;
         this.commands = Arrays.asList(
                 new CreateCourse(view),
-                new FindCourseByID(view),
+                new ShowCourses(view),
                 new FindCourseByTitle(view),
-                new FindCoursesByStatus(view),
-                new FindAllCourses(view),
-                new UpdateCourse(view),
-                new UpdateCourse(view),
+                new UpdateCourseTitle(view),
+                new UpdateCourseStatus(view),
                 new DeleteCourse(view),
-                new CreateUser(view),
-                new FindUserByEmail(view),
                 new Help(view),
                 new Exit(view)
         );
