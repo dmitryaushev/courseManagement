@@ -2,6 +2,7 @@ package com.courses.management.course;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
+import com.courses.management.common.commands.util.InputString;
 
 public class FindCourseByTitle implements Command {
 
@@ -15,15 +16,18 @@ public class FindCourseByTitle implements Command {
 
     @Override
     public String command() {
-        return "find_course_by_title";
+        return "find_course|title";
     }
 
     @Override
-    public void process() {
+    public void process(InputString input) {
 
-        view.write("Enter title");
-        String title = view.read();
-
-        view.write(courseDAO.get(title).toString());
+        input.validateParameters(command());
+        String title = input.getParameters()[1];
+        Course course = courseDAO.get(title);
+        if (course == null) {
+            throw new IllegalArgumentException("Can't find course with provided title");
+        }
+        Courses.printCourse(view, course);
     }
 }
