@@ -2,27 +2,29 @@ package com.courses.management.course;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
+import com.courses.management.common.commands.util.InputString;
 
 import java.util.List;
 
-public class FindAllCourses implements Command {
+public class ShowCourses implements Command {
 
     private View view;
     private CourseDAO courseDAO;
 
-    public FindAllCourses(View view) {
+    public ShowCourses(View view) {
         this.view = view;
         courseDAO = new CourseDAOImpl();
     }
 
     @Override
     public String command() {
-        return "find_all_courses";
+        return "show_courses";
     }
 
     @Override
-    public void process() {
+    public void process(InputString input) {
 
-        courseDAO.getAll().forEach(System.out::println);
+        List<Course> courses = courseDAO.getAll();
+        courses.forEach(x -> Courses.printCourse(view, x));
     }
 }
