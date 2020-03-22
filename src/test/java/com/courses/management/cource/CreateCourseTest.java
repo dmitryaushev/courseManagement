@@ -1,0 +1,77 @@
+package com.courses.management.cource;
+
+import com.courses.management.common.Command;
+import com.courses.management.common.View;
+import com.courses.management.common.commands.util.InputString;
+import com.courses.management.course.Course;
+import com.courses.management.course.CourseDAO;
+import com.courses.management.course.CreateCourse;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class CreateCourseTest {
+
+    private Command command;
+    private View view;
+    private CourseDAO courseDAO;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Before
+    public void setup() {
+        this.view = mock(View.class);
+        this.courseDAO = mock(CourseDAO.class);
+        this.command = new CreateCourse(view, courseDAO);
+    }
+
+    @Test
+    public void testCanProcessWithCorrectCommand() {
+        //given
+        InputString inputString = new InputString("create_course|JAVA");
+        //when
+        boolean result = command.canProcess(inputString);
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void testCanNotProcessWithWrongCommand() {
+        //given
+        InputString inputString = new InputString("create|JAVA");
+        //when
+        boolean result = command.canProcess(inputString);
+        //then
+        assertFalse(result);
+    }
+
+    @Test
+    public void testProcessWithAlreadyExistTitle() {
+        //given
+        Course course = new Course();
+        course.setTitle("JAVA");
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("Course with title JAVA already exists");
+        //when
+        InputString inputString = new InputString("create_course|JAVA");
+        when(courseDAO.get("JAVA")).thenReturn(course);
+        command.process(inputString);
+    }
+
+    @Test
+    public void testProcessWithCorrectParameters() {
+        //given
+        InputString inputString = new InputString("create_course|JAVA");
+        //when
+        when(courseDAO.get("JAVA")).thenReturn(null);
+        command.process(inputString);
+    }
+}
