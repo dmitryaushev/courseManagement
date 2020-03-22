@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 public class CreateCourseTest {
 
     private Command command;
-    private View view;
     private CourseDAO courseDAO;
 
     @Rule
@@ -28,7 +27,7 @@ public class CreateCourseTest {
 
     @Before
     public void setup() {
-        this.view = mock(View.class);
+        View view = mock(View.class);
         this.courseDAO = mock(CourseDAO.class);
         this.command = new CreateCourse(view, courseDAO);
     }
