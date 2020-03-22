@@ -4,8 +4,6 @@ import com.courses.management.common.commands.Exit;
 import com.courses.management.common.commands.Help;
 import com.courses.management.common.commands.util.InputString;
 import com.courses.management.course.*;
-import com.courses.management.user.CreateUser;
-import com.courses.management.user.FindUserByEmail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +20,7 @@ public class MainController {
         this.commands = Arrays.asList(
                 new CreateCourse(view),
                 new ShowCourses(view),
-                new FindCourseByTitle(view),
+                new FindCourse(view),
                 new UpdateCourseTitle(view),
                 new UpdateCourseStatus(view),
                 new DeleteCourse(view),
@@ -46,6 +44,7 @@ public class MainController {
         for (Command command : commands) {
             try {
                 if (command.canProcess(entry)) {
+                    entry.validateParameters(command.command());
                     command.process(entry);
                     break;
                 }

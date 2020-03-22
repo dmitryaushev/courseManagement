@@ -2,7 +2,10 @@ package com.courses.management.course;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
+import com.courses.management.common.commands.util.Commands;
 import com.courses.management.common.commands.util.InputString;
+
+import java.util.Objects;
 
 public class DeleteCourse implements Command {
 
@@ -16,16 +19,15 @@ public class DeleteCourse implements Command {
 
     @Override
     public String command() {
-        return "delete_course|title";
+        return Commands.DELETE_COURSE;
     }
 
     @Override
     public void process(InputString input) {
 
-        input.validateParameters(command());
         String title = input.getParameters()[1];
         Course course = courseDAO.get(title);
-        if (course == null || course.getTitle() == null) {
+        if (Objects.isNull(course)) {
             throw new IllegalArgumentException(String.format("Course with title %s not exists", title));
         }
 

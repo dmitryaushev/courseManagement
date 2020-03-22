@@ -2,7 +2,10 @@ package com.courses.management.course;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
+import com.courses.management.common.commands.util.Commands;
 import com.courses.management.common.commands.util.InputString;
+
+import java.util.Objects;
 
 public class CreateCourse implements Command {
     private final View view;
@@ -15,13 +18,12 @@ public class CreateCourse implements Command {
 
     @Override
     public String command() {
-        return "create_course|title";
+        return Commands.CREATE_COURSE;
     }
 
     @Override
     public void process(InputString input) {
 
-        input.validateParameters(command());
         Course course = Courses.mapCourse(input);
         validateTitle(course.getTitle());
         courseDAO.create(course);
@@ -30,7 +32,7 @@ public class CreateCourse implements Command {
 
     private void validateTitle(String title) {
         Course course = courseDAO.get(title);
-        if (course != null) {
+        if (Objects.isNull(course)) {
             throw new IllegalArgumentException(String.format("Course with title %s already exists", title));
         }
     }
