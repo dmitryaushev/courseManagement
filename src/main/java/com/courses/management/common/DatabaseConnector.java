@@ -5,18 +5,16 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.sql.DataSource;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class DatabaseConnector {
-    private static final HikariDataSource ds;
     private static final Logger LOG = LogManager.getLogger(DatabaseConnector.class);
+    private final HikariDataSource ds;
 
-    private DatabaseConnector() {
-        throw new RuntimeException("This operation not supported");
-    }
+    public DatabaseConnector() {
 
-    static {
         HikariConfig config = new HikariConfig();
         final Properties properties = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -34,8 +32,7 @@ public class DatabaseConnector {
         ds.setMaximumPoolSize(Integer.parseInt(properties.getProperty("jdbc.connection.pool.max.size")));
     }
 
-
-    public static HikariDataSource getConnector() {
+    public DataSource getDataSource() {
         return ds;
     }
 }

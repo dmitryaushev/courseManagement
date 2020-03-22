@@ -10,11 +10,11 @@ import java.util.Objects;
 public class DeleteCourse implements Command {
 
     private View view;
-    private CourseDAOImpl courseDAO;
+    private CourseDAO courseDAO;
 
-    public DeleteCourse(View view) {
+    public DeleteCourse(View view, CourseDAO courseDAO) {
         this.view = view;
-        courseDAO = new CourseDAOImpl();
+        this.courseDAO = courseDAO;
     }
 
     @Override

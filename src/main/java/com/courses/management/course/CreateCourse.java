@@ -11,9 +11,9 @@ public class CreateCourse implements Command {
     private final View view;
     private CourseDAO courseDAO;
 
-    public CreateCourse(View view) {
+    public CreateCourse(View view, CourseDAO courseDAO) {
         this.view = view;
-        courseDAO = new CourseDAOImpl();
+        this.courseDAO = courseDAO;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class CreateCourse implements Command {
 
     private void validateTitle(String title) {
         Course course = courseDAO.get(title);
-        if (Objects.isNull(course)) {
+        if (Objects.nonNull(course)) {
             throw new IllegalArgumentException(String.format("Course with title %s already exists", title));
         }
     }

@@ -12,9 +12,9 @@ public class UpdateCourseTitle implements Command {
     private View view;
     private CourseDAO courseDAO;
 
-    public UpdateCourseTitle(View view) {
+    public UpdateCourseTitle(View view, CourseDAO courseDAO) {
         this.view = view;
-        courseDAO = new CourseDAOImpl();
+        this.courseDAO = courseDAO;
     }
 
     @Override

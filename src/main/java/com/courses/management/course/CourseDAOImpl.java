@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +15,8 @@ import java.util.List;
 
 public class CourseDAOImpl implements CourseDAO {
 
-    private HikariDataSource dataSource = DatabaseConnector.getConnector();
     private final static Logger LOG = LogManager.getLogger(CourseDAOImpl.class);
+    private DataSource dataSource;
 
     private final static String INSERT = "INSERT INTO course(title, status) VALUES(?, ?);";
     private final static String GET_BY_ID = "SELECT id, title, status FROM course WHERE id = ?;";
@@ -24,6 +24,10 @@ public class CourseDAOImpl implements CourseDAO {
     private static final String GET_ALL = "SELECT id, title, status FROM course;";
     private static final String GET_ALL_BY_STATUS = "SELECT id, title, status FROM course WHERE status = ?;";
     private final static String UPDATE = "UPDATE course SET title = ?, status = ? WHERE id = ?;";
+
+    public CourseDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public void create(Course course)  {

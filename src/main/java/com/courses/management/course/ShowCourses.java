@@ -12,14 +12,14 @@ public class ShowCourses implements Command {
     private View view;
     private CourseDAO courseDAO;
 
-    public ShowCourses(View view) {
+    public ShowCourses(View view, CourseDAO courseDAO) {
         this.view = view;
-        courseDAO = new CourseDAOImpl();
+        this.courseDAO = courseDAO;
     }
 
     @Override
     public String command() {
-        return Commands.SHOW_COURSE;
+        return Commands.SHOW_COURSES;
     }
 
     @Override
