@@ -2,48 +2,36 @@ package com.courses.management.user;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
-import com.courses.management.course.CourseDAOImpl;
+import com.courses.management.common.commands.util.InputString;
+
+import java.util.Objects;
 
 public class CreateUser implements Command {
 
     private View view;
-    private UserDAOImpl userDAO;
+    private UserDAO userDAO;
 
-    public CreateUser(View view) {
+    public CreateUser(View view, UserDAO userDAO) {
         this.view = view;
-        userDAO = new UserDAOImpl();
+        this.userDAO = userDAO;
     }
 
     @Override
     public String command() {
-        return "create_user";
+        return "create_user|firstName|lastName|email";
     }
 
     @Override
-    public void process() {
+    public void process(InputString inputString) {
+        User user = Users.mapUser(inputString);
+        validateEmailExist(user.getEmail());
+        userDAO.create(user);
+        view.write("User created");
+    }
 
-        view.write("Enter user first name");
-        String firstName = view.read();
-        view.write("Enter user last name");
-        String lastName = view.read();
-        view.write("Enter user email");
-        String email = view.read();
-        view.write("Enter course title");
-        String title = view.read();
-
-        if (userDAO.getByEmail(email) == null) {
-
-            User user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-            user.setUserRole(UserRole.NEWCOMER);
-            user.setUserStatus(UserStatus.ACTIVE);
-            user.setCourse(new CourseDAOImpl().get(title));
-
-            userDAO.create(user);
-            view.write("User created");
-        } else
-            view.write(String.format("User with email %s is already exist", email));
+    private void validateEmailExist(String email) {
+        if (Objects.nonNull(userDAO.get(email))) {
+            throw new IllegalArgumentException(String.format("User with email %s already exists", email));
+        }
     }
 }

@@ -1,12 +1,10 @@
 package com.courses.management.user;
 
-import com.courses.management.common.DataAccessObject;
-import com.courses.management.common.DatabaseConnector;
 import com.courses.management.course.CourseDAOImpl;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,13 +12,17 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
-    private HikariDataSource dataSource = DatabaseConnector.getConnector();
+    private DataSource dataSource;
     private final static Logger LOG = LogManager.getLogger(UserDAOImpl.class);
 
     private final static String INSERT = "INSERT INTO users(first_name, last_name, email, user_role, status, course_id) " +
             "VALUES (?, ?, ?, ?, ?, ?);";
 
     private final static String GET_BY_EMAIL = "SELECT * FROM users where email = ?;";
+
+    public UserDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public void create(User user) {
@@ -30,7 +32,7 @@ public class UserDAOImpl implements UserDAO {
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getUserRole().getRole());
-            statement.setString(5, user.getUserStatus().getStatus());
+            statement.setString(5, user.getStatus().getStatus());
             statement.setInt(6, user.getCourse().getId());
             statement.execute();
         } catch (SQLException e) {
@@ -60,7 +62,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getByEmail(String email) {
+    public User get(String email) {
 
         User user = new User();
 
@@ -75,8 +77,8 @@ public class UserDAOImpl implements UserDAO {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setUserRole(UserRole.getUserRole(resultSet.getString("user_role")).get());
-                user.setUserStatus(UserStatus.getUserStatus(resultSet.getString("status")).get());
-                user.setCourse(new CourseDAOImpl().get(resultSet.getInt("course_id")));
+                user.setStatus(UserStatus.getUserStatus(resultSet.getString("status")).get());
+                user.setCourse(new CourseDAOImpl(dataSource).get(resultSet.getInt("course_id")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
