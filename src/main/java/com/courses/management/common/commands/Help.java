@@ -2,6 +2,7 @@ package com.courses.management.common.commands;
 
 import com.courses.management.common.Command;
 import com.courses.management.common.View;
+import com.courses.management.common.commands.util.Commands;
 import com.courses.management.common.commands.util.InputString;
 import com.courses.management.course.CourseStatus;
 
@@ -17,7 +18,7 @@ public class Help implements Command {
 
     @Override
     public String command() {
-        return "help";
+        return Commands.HELP;
     }
 
     @Override
