@@ -14,20 +14,20 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CreateCourseTest {
 
     private Command command;
     private CourseDAO courseDAO;
+    private View view;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setup() {
-        View view = mock(View.class);
+        this.view = mock(View.class);
         this.courseDAO = mock(CourseDAO.class);
         this.command = new CreateCourse(view, courseDAO);
     }
@@ -55,8 +55,7 @@ public class CreateCourseTest {
     @Test
     public void testProcessWithAlreadyExistTitle() {
         //given
-        Course course = new Course();
-        course.setTitle("JAVA");
+        Course course = CoursesTest.getTesCourse();
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Course with title JAVA already exists");
         //when
@@ -68,8 +67,23 @@ public class CreateCourseTest {
     @Test
     public void testProcessWithCorrectParameters() {
         //given
-        InputString inputString = new InputString("create_course|JAVA");
+        Course course = CoursesTest.getTesCourse();
+        InputString inputString = new InputString(String.format("create_course|%s", course.getTitle()));
         //when
+        when(courseDAO.get("JAVA")).thenReturn(null);
+        command.process(inputString);
+        //then
+        verify(view).write(String.format("Course created with title - %s", course.getTitle()));
+        verify(courseDAO, times(1)).create(course);
+    }
+
+    @Test
+    public void testCanNotProcessWithEmptyTitle() {
+        //given
+        InputString inputString = new InputString("create_course| |");
+        //when
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("Course title can't be empty");
         when(courseDAO.get("JAVA")).thenReturn(null);
         command.process(inputString);
     }
