@@ -1,5 +1,6 @@
 package com.courses.management.user;
 
+import com.courses.management.common.View;
 import com.courses.management.common.commands.util.InputString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,5 +40,15 @@ public class Users {
         user.setUserRole(UserRole.NEWCOMER);
         user.setStatus(UserStatus.NOT_ACTIVE);
         return user;
+    }
+
+    public static void printUser(View view, User user) {
+
+        view.write("User:");
+        view.write(String.format("\t first name = %s", user.getFirstName()));
+        view.write(String.format("\t last name = %s", user.getLastName()));
+        view.write(String.format("\t email = %s", user.getEmail()));
+        view.write(String.format("\t user role = %s", user.getUserRole().getRole()));
+        view.write(String.format("\t user status = %s", user.getStatus().getStatus()));
     }
 }
