@@ -24,14 +24,20 @@ public class CreateUser implements Command {
     @Override
     public void process(InputString inputString) {
         User user = Users.mapUser(inputString);
-        validateEmailExist(user.getEmail());
+        validateUser(user);
         userDAO.create(user);
-        view.write("User created");
+        view.write(String.format("User %s %s created!", user.getFirstName(), user.getLastName()));
     }
 
-    private void validateEmailExist(String email) {
-        if (Objects.nonNull(userDAO.get(email))) {
-            throw new IllegalArgumentException(String.format("User with email %s already exists", email));
+    private void validateUser(User user) {
+        if (user.getFirstName().trim().isEmpty()) {
+            throw new IllegalArgumentException("User first name can't be empty");
+        }
+        if (user.getLastName().trim().isEmpty()) {
+            throw new IllegalArgumentException("User last name can't be empty");
+        }
+        if (Objects.nonNull(userDAO.get(user.getEmail()))) {
+            throw new IllegalArgumentException(String.format("User with email %s already exists", user.getEmail()));
         }
     }
 }

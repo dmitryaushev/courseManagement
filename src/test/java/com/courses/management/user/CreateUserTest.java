@@ -16,13 +16,14 @@ public class CreateUserTest {
 
     private UserDAO userDAO;
     private Command command;
+    private View view;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setup() {
-        View view = mock(View.class);
+        this.view = mock(View.class);
         this.userDAO = mock(UserDAO.class);
         this.command = new CreateUser(view, userDAO);
     }
@@ -73,17 +74,49 @@ public class CreateUserTest {
     public void testProcessWithCorrectData() {
         //given
         InputString inputString = new InputString("create_user|Dmitry|Aushev|dmitryaushev@gmail.com");
-        User user = new User();
-        user.setFirstName("Dmitry");
-        user.setLastName("Aushev");
-        user.setEmail("dmitryaushev@gmail.com");
-        user.setUserRole(UserRole.NEWCOMER);
-        user.setStatus(UserStatus.NOT_ACTIVE);
+        User user = UsersTest.getTestUser();
         //when
         when(userDAO.get("dmitryaushev@gmail.com")).thenReturn(null);
         command.process(inputString);
         //then
         verify(userDAO, times(1)).create(user);
         verify(userDAO, times(1)).get("dmitryaushev@gmail.com");
+        verify(view).write(String.format("User %s %s created!", user.getFirstName(), user.getLastName()));
+    }
+
+    @Test
+    public void testProcessEmptyFirstName() {
+        //given
+        InputString inputString = new InputString("create_user||Aushev|dmitryaushev@gmail.com");
+        User user = UsersTest.getTestUser();
+        user.setFirstName(null);
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("User first name can't be empty");
+        //when
+        command.process(inputString);
+    }
+
+    @Test
+    public void testProcessEmptyLastName() {
+        //given
+        InputString inputString = new InputString("create_user|Dmitry||dmitryaushev@gmail.com");
+        User user = UsersTest.getTestUser();
+        user.setLastName(null);
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("User last name can't be empty");
+        //when
+        command.process(inputString);
+    }
+
+    @Test
+    public void testProcessEmptyEmail() {
+        //given
+        InputString inputString = new InputString("create_user|Dmitry|Aushev| |");
+        User user = UsersTest.getTestUser();
+        user.setEmail(null);
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("Wrong email address");
+        //when
+        command.process(inputString);
     }
 }
