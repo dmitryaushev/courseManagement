@@ -35,7 +35,7 @@ public class DeleteUserCourse implements Command {
 
         user.setCourse(null);
         user.setStatus(UserStatus.NOT_ACTIVE);
-        userDAO.removeUserCourseAndSetStatus(email, UserStatus.NOT_ACTIVE);
+        userDAO.update(user);
         view.write(String.format("User course removed and status set to %s", UserStatus.NOT_ACTIVE.getStatus()));
     }
 }

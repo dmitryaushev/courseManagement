@@ -9,8 +9,10 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -20,7 +22,7 @@ public class UserDAOImpl implements UserDAO {
     private final static String INSERT = "INSERT INTO users(first_name, last_name, email, user_role, status) " +
             "VALUES (?, ?, ?, ?, ?);";
     private final static String UPDATE = "UPDATE users SET first_name=?, last_name=?, email=?, user_role=?, " +
-            "status=? WHERE id=?;";
+            "status=?, course_id=? WHERE id=?;";
     private static final String DELETE = "DELETE FROM users WHERE id=?;";
     private static final String GET_BY_ID = "SELECT id, first_name, last_name, email, user_role, status " +
             "FROM users WHERE id=?;";
@@ -34,8 +36,6 @@ public class UserDAOImpl implements UserDAO {
             "WHERE c.title=?;";
     private static final String GET_ALL_USERS_BY_STATUS = "SELECT id, first_name, last_name, email, user_role, status " +
             "FROM users WHERE status=?;";
-    private static final String UPDATE_REMOVE_COURSE_AND_SET_STATUS = "UPDATE users SET course_id = null, status = ? " +
-            "WHERE email = ?";
 
     public UserDAOImpl(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -73,7 +73,11 @@ public class UserDAOImpl implements UserDAO {
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getUserRole().name());
             statement.setString(5, user.getStatus().name());
-            statement.setInt(6, user.getId());
+            if (Objects.isNull(user.getCourse())){
+                statement.setNull(6, Types.NULL);
+            } else
+                statement.setInt(6, user.getCourse().getId());
+            statement.setInt(7, user.getId());
             statement.execute();
         } catch (SQLException e) {
             LOG.error(String.format("update: user.email=%s", user.getEmail()), e);
@@ -159,20 +163,6 @@ public class UserDAOImpl implements UserDAO {
         } catch (SQLException e) {
             LOG.error(String.format("getAllByStatus: user.status=%s", userStatus.name()), e);
             throw new SQLUserException("Error occurred when retrieving users by status");
-        }
-    }
-
-    @Override
-    public void removeUserCourseAndSetStatus(String email, UserStatus userStatus) {
-
-        LOG.debug(String.format("removeUserCourseAndSetStatusNotActive: user.email=%s", email));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(UPDATE_REMOVE_COURSE_AND_SET_STATUS)) {
-            statement.setString(1, userStatus.name());
-            statement.setString(2, email);
-            statement.execute();
-        } catch (SQLException e) {
-            LOG.error(String.format("removeUserCourseAndSetStatusNotActive: user.email=%s", email), e);
-            throw new SQLUserException("Error occurred when removing course from a user");
         }
     }
 
