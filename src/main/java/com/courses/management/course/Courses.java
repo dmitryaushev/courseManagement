@@ -1,9 +1,20 @@
 package com.courses.management.course;
 
+import com.courses.management.common.DatabaseConnector;
 import com.courses.management.common.View;
 import com.courses.management.common.commands.util.InputString;
+import com.courses.management.user.UserDAO;
+
+import javax.sql.DataSource;
+import java.util.List;
 
 public class Courses {
+
+    private CourseDAO courseDAO;
+
+    public Courses(DataSource dataSource) {
+        courseDAO = new CourseDAOImpl(dataSource);
+    }
 
     public static Course mapCourse(InputString input) {
         String[] parameters = input.getParameters();
@@ -20,4 +31,11 @@ public class Courses {
         view.write(String.format("\t status = %s", course.getCourseStatus()));
     }
 
+    public List<Course> showCourses() {
+        return courseDAO.getAll();
+    }
+
+    public Course getById(int id) {
+        return courseDAO.get(id);
+    }
 }
