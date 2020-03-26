@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
+import java.sql.DriverManager;
 import java.util.Properties;
 
 public class DatabaseConnector {
@@ -25,11 +26,19 @@ public class DatabaseConnector {
             throw new RuntimeException("Error loading application.properties", e);
         }
 
+        try {
+            Class.forName(properties.getProperty("jdbc.driver"));
+        } catch (ClassNotFoundException e) {
+            LOG.error("Error loading postgres driver", e);
+            throw new RuntimeException("Error loading postgres driver", e);
+        }
+
         config.setJdbcUrl(properties.getProperty("jdbc.url"));
 //        config.setUsername(properties.getProperty("jdbc.username"));
 //        config.setPassword(properties.getProperty("jdbc.password"));
         ds = new HikariDataSource(config);
         ds.setMaximumPoolSize(Integer.parseInt(properties.getProperty("jdbc.connection.pool.max.size")));
+
     }
 
     public DataSource getDataSource() {
