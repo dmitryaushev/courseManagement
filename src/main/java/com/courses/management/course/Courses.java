@@ -1,9 +1,7 @@
 package com.courses.management.course;
 
-import com.courses.management.common.DatabaseConnector;
 import com.courses.management.common.View;
 import com.courses.management.common.commands.util.InputString;
-import com.courses.management.user.UserDAO;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -12,8 +10,8 @@ public class Courses {
 
     private CourseDAO courseDAO;
 
-    public Courses(DataSource dataSource) {
-        courseDAO = new CourseDAOImpl(dataSource);
+    public Courses(CourseDAO courseDAO) {
+        this.courseDAO = courseDAO;
     }
 
     public static Course mapCourse(InputString input) {
