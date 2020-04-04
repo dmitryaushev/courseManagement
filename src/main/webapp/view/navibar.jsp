@@ -1,4 +1,4 @@
- <div class="navbar">
+<div class="navbar">
     <a href="${pageContext.request.contextPath}/">Home</a>
     <div class="dropdown">
         <button class="dropbtn">Courses
