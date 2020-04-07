@@ -3,18 +3,24 @@ package com.courses.management.course;
 import com.courses.management.common.exceptions.SQLCourseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
+import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseDAOImpl implements CourseDAO {
 
     private final static Logger LOG = LogManager.getLogger(CourseDAOImpl.class);
     private DataSource dataSource;
+    private SessionFactory sessionFactory;
 
     private final static String INSERT = "INSERT INTO course(title, status) VALUES(?, ?);";
     private final static String GET_BY_ID = "SELECT id, title, status FROM course WHERE id = ?;";
@@ -23,21 +29,30 @@ public class CourseDAOImpl implements CourseDAO {
     private static final String GET_ALL_BY_STATUS = "SELECT id, title, status FROM course WHERE status = ?;";
     private final static String UPDATE = "UPDATE course SET title = ?, status = ? WHERE id = ?;";
 
-    public CourseDAOImpl(DataSource dataSource) {
+    public CourseDAOImpl(DataSource dataSource, SessionFactory sessionFactory) {
         this.dataSource = dataSource;
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public void create(Course course)  {
 
+        Session session = null;
+        Transaction transaction;
+
         LOG.debug(String.format("create: course.title=%s", course.getTitle()));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(INSERT)) {
-            statement.setString(1, course.getTitle());
-            statement.setString(2, course.getCourseStatus().getStatus());
-            statement.execute();
-        } catch (SQLException e) {
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            session.save(course);
+            transaction.commit();
+        } catch (Exception e) {
             LOG.error(String.format("create: course.title=%s", course.getTitle()), e);
             throw new SQLCourseException("Error occurred when saving a course");
+        } finally {
+            if (Objects.nonNull(session)) {
+                session.close();
+            }
         }
     }
 
@@ -66,11 +81,10 @@ public class CourseDAOImpl implements CourseDAO {
     public Course get(int id) {
 
         LOG.debug(String.format("find: course.id = %d", id));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_BY_ID)) {
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            return getCourse(resultSet);
-        } catch (SQLException e) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Course c where  c.id=:id", Course.class)
+                    .setParameter("id", id).uniqueResult();
+        } catch (Exception e) {
             LOG.error(String.format("get: course.id = %d", id), e);
             throw new SQLCourseException("Error occurred when find a course");
         }
@@ -80,11 +94,10 @@ public class CourseDAOImpl implements CourseDAO {
     public Course get(String title) {
 
         LOG.debug(String.format("find: course.title = %s", title));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_BY_TITLE)) {
-            statement.setString(1, title);
-            ResultSet resultSet = statement.executeQuery();
-            return getCourse(resultSet);
-        } catch (SQLException e) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Course c where c.title=:title", Course.class)
+                    .setParameter("title", title).uniqueResult();
+        } catch (Exception e) {
             LOG.error(String.format("get: course.title=%s", title), e);
             throw new SQLCourseException("Error occurred when find a course");
         }
@@ -94,10 +107,9 @@ public class CourseDAOImpl implements CourseDAO {
     public List<Course> getAll() {
 
         LOG.debug("getAll");
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_ALL)) {
-            ResultSet resultSet = statement.executeQuery();
-            return getCourseList(resultSet);
-        } catch (SQLException e) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Course", Course.class).list();
+        } catch (Exception e) {
             LOG.error("getAll", e);
             throw new SQLCourseException("Error occurred when get all courses");
         }

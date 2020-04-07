@@ -41,8 +41,8 @@ public class Courses {
 
     public Course getById(int id) {
         Course course = courseDAO.get(id);
-        List<User> users = userDAO.getUsersByCourse(course.getTitle());
-        course.setUsers(users);
+//        List<User> users = userDAO.getUsersByCourse(course.getTitle());
+//        course.setUsers(users);
         return course;
     }
 
