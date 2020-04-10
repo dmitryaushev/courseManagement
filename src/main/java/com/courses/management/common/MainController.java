@@ -21,11 +21,12 @@ public class MainController {
 
     public MainController(View view, DataSource dataSource, SessionFactory sessionFactory) {
         this.view = view;
-        CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource, sessionFactory);
+        CourseDAOImpl courseDAO = new CourseDAOImpl(sessionFactory);
         UserDAOImpl userDAO = new UserDAOImpl(dataSource, sessionFactory);
         this.commands = Arrays.asList(
                 new CreateCourse(view, courseDAO),
                 new ShowCourses(view, courseDAO),
+                new ShowCoursesByStatus(view, courseDAO),
                 new FindCourse(view, courseDAO),
                 new UpdateCourseTitle(view, courseDAO),
                 new UpdateCourseStatus(view, courseDAO),

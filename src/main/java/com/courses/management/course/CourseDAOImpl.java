@@ -7,24 +7,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class CourseDAOImpl implements CourseDAO {
 
     private final static Logger LOG = LogManager.getLogger(CourseDAOImpl.class);
-    private DataSource dataSource;
     private SessionFactory sessionFactory;
 
-    private static final String GET_ALL_BY_STATUS = "SELECT id, title, status FROM course WHERE status = ?;";
-
-    public CourseDAOImpl(DataSource dataSource, SessionFactory sessionFactory) {
-        this.dataSource = dataSource;
+    public CourseDAOImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -102,7 +93,7 @@ public class CourseDAOImpl implements CourseDAO {
     @Override
     public List<Course> getAll() {
 
-        LOG.debug("getAll");
+        LOG.debug("getAll: ");
 
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("from Course", Course.class).list();
@@ -113,50 +104,16 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public List<Course> getAllByStatus(String status) {
+    public List<Course> getAllByStatus(CourseStatus courseStatus) {
 
-        List<Course> coursesList = new ArrayList<>();
+        LOG.debug(String.format("getAllByStatus: course.status=%s", courseStatus.name()));
 
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_ALL_BY_STATUS)) {
-            statement.setString(1, status);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-
-                Course course = new Course();
-                course.setId(resultSet.getInt("id"));
-                course.setTitle(resultSet.getString("title"));
-                course.setCourseStatus(CourseStatus.getCourseStatus(resultSet.getString("status")).get());
-                coursesList.add(course);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from Course c where c.courseStatus=:courseStatus", Course.class)
+                    .setParameter("courseStatus", courseStatus).list();
+        } catch (Exception e) {
+            LOG.error(String.format("getAllByStatus: user.status=%s", courseStatus.name()), e);
+            throw new SQLCourseException("Error occurred when get all courses by status");
         }
-
-        return coursesList;
-    }
-
-    private Course getCourse(ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            return mapCourseFromRS(resultSet);
-        }
-        return null;
-    }
-
-    private List<Course> getCourseList(ResultSet resultSet) throws SQLException {
-        List<Course> courses = new ArrayList<>();
-        while (resultSet.next()) {
-            courses.add(mapCourseFromRS(resultSet));
-        }
-        return courses;
-    }
-
-    private Course mapCourseFromRS(ResultSet resultSet) throws SQLException {
-
-        Course course = new Course();
-        course.setId(resultSet.getInt("id"));
-        course.setTitle(resultSet.getString("title"));
-        course.setCourseStatus(CourseStatus.getCourseStatus(resultSet.getString("status")).get());
-        return course;
     }
 }
