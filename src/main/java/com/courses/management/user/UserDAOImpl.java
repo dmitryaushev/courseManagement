@@ -7,29 +7,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class UserDAOImpl implements UserDAO {
 
     private final static Logger LOG = LogManager.getLogger(UserDAOImpl.class);
-    private DataSource dataSource;
     private SessionFactory sessionFactory;
 
-    private static final String GET_USERS_BY_COURSE_TITLE = "SELECT u.id, u.first_name, u.last_name, u.email, u.user_role, u.status " +
-            "FROM users u " +
-            "INNER JOIN course c ON c.id=u.course_id " +
-            "WHERE c.title=?;";
-    private static final String GET_ALL_USERS_BY_STATUS = "SELECT id, first_name, last_name, email, user_role, status " +
-            "FROM users WHERE status=?;";
-
-    public UserDAOImpl(DataSource dataSource, SessionFactory sessionFactory) {
-        this.dataSource = dataSource;
+    public UserDAOImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -133,11 +119,14 @@ public class UserDAOImpl implements UserDAO {
     public List<User> getUsersByCourse(String courseTitle) {
 
         LOG.debug(String.format("getUsersByCourse: course.title=%s", courseTitle));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_USERS_BY_COURSE_TITLE)) {
-            statement.setString(1, courseTitle);
-            ResultSet resultSet = statement.executeQuery();
-            return getUserList(resultSet);
-        } catch (SQLException e) {
+
+        try (Session session = sessionFactory.openSession()) {
+            String query = "select u " +
+                    "from User u " +
+                    "join u.course c " +
+                    "where c.title=:courseTitle";
+            return session.createQuery(query, User.class).setParameter("courseTitle", courseTitle).list();
+        } catch (Exception e) {
             LOG.error(String.format("getUsersByCourse: course.title=%s", courseTitle), e);
             throw new SQLUserException("Error occurred when retrieving users by course title");
         }
@@ -147,39 +136,14 @@ public class UserDAOImpl implements UserDAO {
     public List<User> getAllByStatus(UserStatus userStatus) {
 
         LOG.debug(String.format("getAllByStatus: user.status=%s", userStatus.name()));
-        try (PreparedStatement statement = dataSource.getConnection().prepareStatement(GET_ALL_USERS_BY_STATUS)) {
-            statement.setString(1, userStatus.name());
-            return getUserList(statement.executeQuery());
-        } catch (SQLException e) {
+
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("from User u where u.status=:userStatus", User.class)
+                    .setParameter("userStatus", userStatus).list();
+        } catch (Exception e) {
             LOG.error(String.format("getAllByStatus: user.status=%s", userStatus.name()), e);
             throw new SQLUserException("Error occurred when retrieving users by status");
         }
-    }
-
-    private User getUser(ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            return mapUserFromRS(resultSet);
-        }
-        return null;
-    }
-
-    private List<User> getUserList(ResultSet rs) throws SQLException {
-        List<User> users = new ArrayList<>();
-        while (rs.next()) {
-            users.add(mapUserFromRS(rs));
-        }
-        return users;
-    }
-
-    private User mapUserFromRS(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setFirstName(resultSet.getString("first_name"));
-        user.setLastName(resultSet.getString("last_name"));
-        user.setEmail(resultSet.getString("email"));
-        user.setUserRole(UserRole.getUserRole(resultSet.getString("user_role")).get());
-        user.setStatus(UserStatus.getUserStatus(resultSet.getString("status")).get());
-        return user;
     }
 
     private void transactionRollback(Transaction transaction) {
@@ -187,5 +151,4 @@ public class UserDAOImpl implements UserDAO {
             transaction.rollback();
         }
     }
-
 }
