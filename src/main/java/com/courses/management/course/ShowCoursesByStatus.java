@@ -35,6 +35,6 @@ public class ShowCoursesByStatus implements Command {
             view.write("There is no courses by specified status");
         } else {
             courses.forEach(x -> Courses.printCourse(view, x));
-        };
+        }
     }
 }

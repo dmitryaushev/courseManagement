@@ -2,7 +2,6 @@ package com.courses.management.course;
 
 import com.courses.management.common.Validator;
 import com.courses.management.common.exceptions.ErrorMessage;
-import com.courses.management.config.DatabaseConnector;
 import com.courses.management.config.HibernateDatabaseConnector;
 
 import javax.servlet.ServletException;
