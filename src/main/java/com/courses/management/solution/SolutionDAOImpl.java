@@ -16,7 +16,7 @@ public class SolutionDAOImpl implements DataAccessObject<Solution> {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Solution solution) {
 
     }
 

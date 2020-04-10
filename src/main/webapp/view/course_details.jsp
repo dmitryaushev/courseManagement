@@ -25,20 +25,20 @@
         <td>
             <c:out value="${course.courseStatus}"/>
         </td>
-<%--        <td>--%>
-<%--            <c:choose>--%>
-<%--                <c:when test="${not empty course.users}">--%>
-<%--                    <c:forEach items="${course.users}" var="user">--%>
-<%--                        <a href="${pageContext.request.contextPath}/user/get?id=${user.id}" class="button"--%>
-<%--                           role="button"--%>
-<%--                           tabindex="0">${user.firstName} ${user.lastName}</a><br>--%>
-<%--                    </c:forEach>--%>
-<%--                </c:when>--%>
-<%--                <c:otherwise>--%>
-<%--                    <p>No students yet</p>--%>
-<%--                </c:otherwise>--%>
-<%--            </c:choose>--%>
-<%--        </td>--%>
+        <td>
+            <c:choose>
+                <c:when test="${not empty course.users}">
+                    <c:forEach items="${course.users}" var="user">
+                        <a href="${pageContext.request.contextPath}/user/get?id=${user.id}" class="button"
+                           role="button"
+                           tabindex="0">${user.firstName} ${user.lastName}</a><br>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <p>No students yet</p>
+                </c:otherwise>
+            </c:choose>
+        </td>
     </tr>
     </tbody>
 </table>

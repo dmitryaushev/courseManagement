@@ -14,7 +14,7 @@ public class HomeworkDAOImpl implements HomeworkDAO {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Homework homework) {
 
     }
 

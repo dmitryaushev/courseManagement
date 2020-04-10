@@ -5,7 +5,7 @@ import java.util.List;
 public interface DataAccessObject<T extends BaseEntity> {
     void create(T t);
     void update(T t);
-    void delete(int id);
+    void delete(T t);
     T get(int id);
     List<T> getAll();
 }

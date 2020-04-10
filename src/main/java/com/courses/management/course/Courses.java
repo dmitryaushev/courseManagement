@@ -2,8 +2,6 @@ package com.courses.management.course;
 
 import com.courses.management.common.View;
 import com.courses.management.common.commands.util.InputString;
-import com.courses.management.user.User;
-import com.courses.management.user.UserDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,11 +11,9 @@ public class Courses {
 
     private static final Logger LOG = LogManager.getLogger(Courses.class);
     private CourseDAO courseDAO;
-    private UserDAO userDAO;
 
-    public Courses(CourseDAO courseDAO, UserDAO userDAO) {
+    public Courses(CourseDAO courseDAO) {
         this.courseDAO = courseDAO;
-        this.userDAO = userDAO;
     }
 
     public static Course mapCourse(InputString input) {
@@ -33,6 +29,7 @@ public class Courses {
         view.write("Course:");
         view.write(String.format("\t title = %s", course.getTitle()));
         view.write(String.format("\t status = %s", course.getCourseStatus()));
+        course.getUsers().forEach(x -> view.write("\t student = " + x.getFirstName() + " " + x.getLastName()));
     }
 
     public List<Course> showCourses() {
@@ -40,10 +37,7 @@ public class Courses {
     }
 
     public Course getById(int id) {
-        Course course = courseDAO.get(id);
-//        List<User> users = userDAO.getUsersByCourse(course.getTitle());
-//        course.setUsers(users);
-        return course;
+        return courseDAO.get(id);
     }
 
     public Course getByTitle(String title) {

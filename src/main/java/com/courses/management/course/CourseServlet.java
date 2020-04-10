@@ -4,7 +4,6 @@ import com.courses.management.common.Validator;
 import com.courses.management.common.exceptions.ErrorMessage;
 import com.courses.management.config.DatabaseConnector;
 import com.courses.management.config.HibernateDatabaseConnector;
-import com.courses.management.user.UserDAOImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,8 +24,7 @@ public class CourseServlet extends HttpServlet {
 
         super.init();
         service = new Courses(new CourseDAOImpl(DatabaseConnector.getDataSource(),
-                HibernateDatabaseConnector.getSessionFactory()),
-                new UserDAOImpl(DatabaseConnector.getDataSource()));
+                HibernateDatabaseConnector.getSessionFactory()));
     }
 
     @Override
