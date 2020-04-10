@@ -5,6 +5,8 @@ import com.courses.management.common.View;
 import com.courses.management.common.commands.util.Commands;
 import com.courses.management.common.commands.util.InputString;
 
+import java.util.List;
+
 public class ShowCoursesByStatus implements Command {
 
     private View view;
@@ -25,7 +27,14 @@ public class ShowCoursesByStatus implements Command {
     public void process(InputString input) {
 
         String status = input.getParameters()[COURSE_STATUS_INDEX];
-        CourseStatus courseStatus = CourseStatus.getCourseStatus(status).get();
-        courseDAO.getAllByStatus(courseStatus).forEach(x -> Courses.printCourse(view, x));
+        CourseStatus courseStatus = CourseStatus.getCourseStatus(status).orElseThrow(() ->
+                new IllegalArgumentException("Course status incorrect"));
+
+        List<Course> courses = courseDAO.getAllByStatus(courseStatus);
+        if (courses.isEmpty()) {
+            view.write("There is no courses by specified status");
+        } else {
+            courses.forEach(x -> Courses.printCourse(view, x));
+        };
     }
 }
