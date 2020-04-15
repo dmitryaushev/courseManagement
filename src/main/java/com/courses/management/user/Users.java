@@ -19,6 +19,11 @@ public class Users {
     private static final int LAST_NAME_INDEX = 2;
     private static final int EMAIL_INDEX = 3;
 
+    private UserDAO userDAO;
+
+    public Users(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     public static void validateEmail(String email) {
         Matcher matcher = EMAIL_PATTERN.matcher(email);
@@ -27,6 +32,7 @@ public class Users {
             throw new IllegalArgumentException(String.format("Wrong email address %s", email));
         }
     }
+
     public static User mapUser(InputString inputString) {
 
         String[] parameters = inputString.getParameters();
@@ -50,5 +56,13 @@ public class Users {
         view.write(String.format("\t email = %s", user.getEmail()));
         view.write(String.format("\t user role = %s", user.getUserRole().getRole()));
         view.write(String.format("\t user status = %s", user.getStatus().getStatus()));
+    }
+
+    public User getById(int id) {
+        return userDAO.get(id);
+    }
+
+    public User getByEmail(String email) {
+        return userDAO.get(email);
     }
 }

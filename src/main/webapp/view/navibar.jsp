@@ -15,9 +15,9 @@
             <i></i>
         </button>
         <div class="dropdown-content">
-            <a href="#">Show user</a>
-            <a href="#">Create user</a>
-            <a href="#">Find User</a>
+            <a href="${pageContext.request.contextPath}/user/showUsers">Show users</a>
+            <a href="${pageContext.request.contextPath}/user/createUser">Create user</a>
+            <a href="${pageContext.request.contextPath}/user/findUser">Find User</a>
         </div>
     </div>
 </div>
