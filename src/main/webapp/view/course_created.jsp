@@ -4,11 +4,11 @@
 <head>
     <title>Course created</title>
     <style>
-        <%@include file="style.css" %>
+        <%@include file="css/style.css" %>
     </style>
 </head>
 <body>
 <c:import url="navibar.jsp"/>
-<p>Course with title ${courseTitle} created</p>
+<p align="myform">Course with title ${course_title} created</p>
 </body>
 </html>

@@ -5,7 +5,7 @@
 <head>
     <title>Course management</title>
     <style>
-        <%@include file="style.css" %>
+        <%@include file="css/style.css" %>
     </style>
 </head>
 <body>

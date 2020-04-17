@@ -5,13 +5,13 @@
 <head>
     <title>Show Courses</title>
     <style>
-        <%@include file="style.css" %>
+        <%@include file="css/style.css" %>
     </style>
 </head>
 <body>
 <c:import url="navibar.jsp"/>
 <c:if test="${not empty courses}">
-    <table class="zui-table">
+    <table class="zui-table myform">
         <thead>
         <tr>
             <th>Title</th>
