@@ -24,6 +24,7 @@ public class HibernateDatabaseConnector {
             sessionFactory = metadata.getSessionFactoryBuilder().build();
         } catch (Exception e) {
             LOG.error("Init hibernate", e);
+            throw new RuntimeException("Init error", e);
         }
     }
 
