@@ -12,6 +12,9 @@ public class Courses {
     private static final Logger LOG = LogManager.getLogger(Courses.class);
     private CourseDAO courseDAO;
 
+    public Courses() {
+    }
+
     public Courses(CourseDAO courseDAO) {
         this.courseDAO = courseDAO;
     }

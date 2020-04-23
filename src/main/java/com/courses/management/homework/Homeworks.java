@@ -14,6 +14,9 @@ public class Homeworks {
     private HomeworkDAO homeworkDAO;
     private CourseDAO courseDAO;
 
+    public Homeworks() {
+    }
+
     public Homeworks(HomeworkDAO homeworkDAO, CourseDAO courseDAO) {
         this.homeworkDAO = homeworkDAO;
         this.courseDAO = courseDAO;
@@ -42,7 +45,7 @@ public class Homeworks {
                 }
             }
         } catch (Exception e) {
-            if (Objects.nonNull(homework) ) {
+            if (Objects.nonNull(homework) && homework.getId() != 0) {
                 homeworkDAO.delete(homework);
             }
             throw new RuntimeException("Error when loading file " + e.getMessage());
@@ -58,7 +61,7 @@ public class Homeworks {
     private Homework createHomework(Course course, FileItem item) {
 
         String title = new File(item.getName()).getName();
-        String path = PropertiesUtil.getFolderPath() + File.separator + title;
+        String path = PropertiesUtil.getFolderPath() + File.separator + course.getTitle() + File.separator + title;
 
         Homework homework = new Homework();
         homework.setCourse(course);

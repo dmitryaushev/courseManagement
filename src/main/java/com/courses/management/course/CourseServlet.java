@@ -2,7 +2,9 @@ package com.courses.management.course;
 
 import com.courses.management.common.Validator;
 import com.courses.management.common.exceptions.ErrorMessage;
-import com.courses.management.config.HibernateDatabaseConnector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,15 +16,21 @@ import java.util.List;
 import java.util.Objects;
 
 @WebServlet("/course/*")
+@Configurable
 public class CourseServlet extends HttpServlet {
 
     private Courses service;
+
+    @Autowired
+    public void setService(Courses service) {
+        this.service = service;
+    }
 
     @Override
     public void init() throws ServletException {
 
         super.init();
-        service = new Courses(new CourseDAOImpl(HibernateDatabaseConnector.getSessionFactory()));
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
 
     @Override

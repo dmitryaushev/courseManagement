@@ -1,10 +1,11 @@
 package com.courses.management.homework;
 
-import com.courses.management.config.HibernateDatabaseConnector;
-import com.courses.management.course.CourseDAOImpl;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,15 +18,23 @@ import java.nio.file.Files;
 import java.util.List;
 
 @WebServlet("/homework/*")
+@Configurable
 public class HomeworkServlet extends HttpServlet {
 
     private Homeworks service;
 
+    public HomeworkServlet() {
+    }
+
+    @Autowired
+    public void setService(Homeworks service) {
+        this.service = service;
+    }
+
     @Override
     public void init() throws ServletException {
         super.init();
-        service = new Homeworks(new HomeworkDAOImpl(HibernateDatabaseConnector.getSessionFactory()),
-                new CourseDAOImpl(HibernateDatabaseConnector.getSessionFactory()));
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
 
     @Override
