@@ -11,12 +11,13 @@ public class Courses {
 
     private static final Logger LOG = LogManager.getLogger(Courses.class);
     private CourseDAO courseDAO;
+    private CourseRepository courseRepository;
 
     public Courses() {
     }
 
-    public Courses(CourseDAO courseDAO) {
-        this.courseDAO = courseDAO;
+    public Courses(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
     }
 
     public static Course mapCourse(InputString input) {
@@ -36,19 +37,19 @@ public class Courses {
     }
 
     public List<Course> showCourses() {
-        return courseDAO.getAll();
+        return courseRepository.findAll();
     }
 
     public Course getById(int id) {
-        return courseDAO.get(id);
+        return courseRepository.findById(id).orElse(new Course());
     }
 
     public Course getByTitle(String title) {
-        return courseDAO.get(title);
+        return courseRepository.getByTitle(title);
     }
 
     public void createCourse(Course course) {
-        courseDAO.create(course);
+        courseRepository.save(course);
     }
 
 

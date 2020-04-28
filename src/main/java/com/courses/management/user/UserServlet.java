@@ -1,7 +1,9 @@
 package com.courses.management.user;
 
 import com.courses.management.common.exceptions.ErrorMessage;
-import com.courses.management.config.HibernateDatabaseConnector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,14 +16,20 @@ import java.util.List;
 import java.util.Objects;
 
 @WebServlet("/user/*")
+@Configurable
 public class UserServlet extends HttpServlet {
 
     private Users service;
 
+    @Autowired
+    public void setService(Users service) {
+        this.service = service;
+    }
+
     @Override
     public void init() throws ServletException {
         super.init();
-        service = new Users(new UserDAOImpl(HibernateDatabaseConnector.getSessionFactory()));
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
 
     @Override

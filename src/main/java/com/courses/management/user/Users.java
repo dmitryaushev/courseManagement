@@ -20,9 +20,10 @@ public class Users {
     private static final int EMAIL_INDEX = 3;
 
     private UserDAO userDAO;
+    private UserRepository userRepository;
 
-    public Users(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public Users(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public static void validateEmail(String email) {
@@ -59,10 +60,10 @@ public class Users {
     }
 
     public User getById(int id) {
-        return userDAO.get(id);
+        return userRepository.findById(id).orElse(new User());
     }
 
     public User getByEmail(String email) {
-        return userDAO.get(email);
+        return userRepository.getByEmail(email);
     }
 }

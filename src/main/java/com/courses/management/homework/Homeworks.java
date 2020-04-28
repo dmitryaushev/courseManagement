@@ -3,6 +3,7 @@ package com.courses.management.homework;
 import com.courses.management.common.PropertiesUtil;
 import com.courses.management.course.Course;
 import com.courses.management.course.CourseDAO;
+import com.courses.management.course.CourseRepository;
 import org.apache.commons.fileupload.FileItem;
 
 import java.io.File;
@@ -13,22 +14,24 @@ public class Homeworks {
 
     private HomeworkDAO homeworkDAO;
     private CourseDAO courseDAO;
+    private HomeworkRepository homeworkRepository;
+    private CourseRepository courseRepository;
 
     public Homeworks() {
     }
 
-    public Homeworks(HomeworkDAO homeworkDAO, CourseDAO courseDAO) {
-        this.homeworkDAO = homeworkDAO;
-        this.courseDAO = courseDAO;
+    public Homeworks(HomeworkRepository homeworkRepository, CourseRepository courseRepository) {
+        this.homeworkRepository = homeworkRepository;
+        this.courseRepository = courseRepository;
     }
 
     public Homework get(int id) {
-        return homeworkDAO.get(id);
+        return homeworkRepository.findById(id).orElse(new Homework());
     }
 
     public void uploadFile(List<FileItem> items, Integer courseId) {
 
-        Course course = courseDAO.get(courseId);
+        Course course = courseRepository.getOne(courseId);
         if (Objects.isNull(course)) {
             throw new RuntimeException(String.format("Course with id = %s not found", courseId));
         }
@@ -40,13 +43,13 @@ public class Homeworks {
                     homework = createHomework(course, item);
                     File file = new File(homework.getPath());
                     validateIfFileExists(file, homework.getTitle());
-                    homeworkDAO.create(homework);
+                    homeworkRepository.save(homework);
                     item.write(file);
                 }
             }
         } catch (Exception e) {
             if (Objects.nonNull(homework) && homework.getId() != 0) {
-                homeworkDAO.delete(homework);
+                homeworkRepository.delete(homework);
             }
             throw new RuntimeException("Error when loading file " + e.getMessage());
         }
