@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Courses {
 
@@ -30,6 +31,9 @@ public class Courses {
     }
 
     public void createCourse(Course course) {
+        if (Objects.nonNull(getByTitle(course.getTitle()))){
+            throw new CourseAlreadyExistError(String.format("course with title %s already exists", course.getTitle()));
+        }
         courseRepository.save(course);
     }
 

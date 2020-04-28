@@ -3,6 +3,7 @@ package com.courses.management.user;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +34,7 @@ public class Users {
     }
 
     public User getByEmail(String email) {
-        return userRepository.getByEmail(email);
+        return userRepository.getByEmail(email)
+                .orElseThrow(() -> new UserNotExistError(String.format("user with email %s not exist", email)));
     }
 }
