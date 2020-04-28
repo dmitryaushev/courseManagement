@@ -2,7 +2,6 @@ package com.courses.management.homework;
 
 import com.courses.management.common.PropertiesUtil;
 import com.courses.management.course.Course;
-import com.courses.management.course.CourseDAO;
 import com.courses.management.course.CourseRepository;
 import org.apache.commons.fileupload.FileItem;
 
@@ -12,8 +11,6 @@ import java.util.Objects;
 
 public class Homeworks {
 
-    private HomeworkDAO homeworkDAO;
-    private CourseDAO courseDAO;
     private HomeworkRepository homeworkRepository;
     private CourseRepository courseRepository;
 
