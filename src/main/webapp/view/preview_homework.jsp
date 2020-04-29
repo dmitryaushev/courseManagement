@@ -10,9 +10,8 @@
 <body>
 <c:import url="/view/navibar.jsp"/>
 <div align="center">
-    <object data="${pageContext.request.contextPath}/homework/get?id=${homeworkId}"
-            type="application/pdf" width="1000" height="600">
-    </object>
+    <iframe src="${pageContext.request.contextPath}/homework/get?id=${homeworkId}"
+            width="1000" height="600" allowfullscreen webkitwebkitallowfullscreen></iframe>
 </div>
 </body>
 </html>

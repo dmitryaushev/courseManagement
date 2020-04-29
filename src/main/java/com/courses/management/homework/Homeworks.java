@@ -13,6 +13,7 @@ public class Homeworks {
 
     private HomeworkRepository homeworkRepository;
     private CourseRepository courseRepository;
+    private String folderPath;
 
     public Homeworks() {
     }
@@ -61,12 +62,16 @@ public class Homeworks {
     private Homework createHomework(Course course, FileItem item) {
 
         String title = new File(item.getName()).getName();
-        String path = PropertiesUtil.getFolderPath() + File.separator + course.getTitle() + File.separator + title;
+        String path = String.format("%s%s%s%s%s", folderPath, File.separator, course.getTitle(), File.separator, title);
 
         Homework homework = new Homework();
         homework.setCourse(course);
         homework.setTitle(title);
         homework.setPath(path);
         return homework;
+    }
+
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
     }
 }
