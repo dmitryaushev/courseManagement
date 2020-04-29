@@ -3,6 +3,8 @@ package com.courses.management.homework;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import java.util.List;
 @RequestMapping(path = "/homework/*")
 public class HomeworkController {
 
+    private static final Logger LOG = LogManager.getLogger(HomeworkController.class);
     private Homeworks homeworks;
 
     @Autowired
@@ -64,6 +67,7 @@ public class HomeworkController {
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
                 homeworks.uploadFile(multiparts, courseId);
             } catch (Exception e) {
+                LOG.error(String.format("uploadHomeWork: courseId=%d", courseId), e);
                 model.addAttribute("error", "File upload failed dues to " + e);
                 return new ModelAndView("create_homework", model);
             }
@@ -76,6 +80,7 @@ public class HomeworkController {
 
     @ExceptionHandler({FileNotFoundException.class})
     public ModelAndView handleException(FileNotFoundException e) {
+        LOG.error("handleException FileNotFoundException: ", e);
         ModelAndView modelAndView = new ModelAndView("file_not_found");
         modelAndView.addObject("error", e.getMessage());
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);

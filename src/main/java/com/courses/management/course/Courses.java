@@ -19,18 +19,22 @@ public class Courses {
     }
 
     public List<Course> showCourses() {
+        LOG.debug("showCourses: ");
         return courseRepository.findAll();
     }
 
     public Course getById(int id) {
+        LOG.debug(String.format("getById: id=%d", id));
         return courseRepository.findById(id).orElse(new Course());
     }
 
     public Course getByTitle(String title) {
+        LOG.debug(String.format("getByTitle: title=%s", title));
         return courseRepository.getByTitle(title);
     }
 
     public void createCourse(Course course) {
+        LOG.debug(String.format("createCourse: courseTitle=%s", course.getTitle()));
         if (Objects.nonNull(getByTitle(course.getTitle()))){
             throw new CourseAlreadyExistError(String.format("course with title %s already exists", course.getTitle()));
         }
