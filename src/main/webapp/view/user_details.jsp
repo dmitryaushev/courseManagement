@@ -4,42 +4,60 @@
 <head>
     <title>User Details</title>
     <style>
-        <%@include file="css/style.css" %>
+        <%@include file="/view/css/style.css" %>
     </style>
 </head>
 <body>
-<c:import url="navibar.jsp"/>
-<table class="zui-table">
-    <thead>
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>User Role</th>
-        <th>User Status</th>
-        <th>Course</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            <c:out value="${user.firstName}"/>
-        </td>
-        <td>
-            <c:out value="${user.lastName}"/>
-        </td>
-        <td>
-            <c:out value="${user.userRole}"/>
-        </td>
-        <td>
-            <c:out value="${user.status}"/>
-        </td>
-        <td>
-            <a href="${pageContext.request.contextPath}/course/get?id=${user.course.id}" class="button"
-               role="button"
-               tabindex="0">${user.course.title}</a><br>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<c:import url="/view/navibar.jsp"/>
+<div align="center">
+    <table class="zui-table">
+        <thead>
+        <tr>
+            <th>Full name</th>
+            <th>Email</th>
+            <th>User role</th>
+            <th>User status</th>
+            <th>Course</th>
+            <th>Solutions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                ${user.firstName} ${user.lastName}
+            </td>
+            <td>
+                ${user.email}
+            </td>
+            <td>
+                ${user.userRole}
+            </td>
+            <td>
+                ${user.status}
+            </td>
+            <td>
+                <a href="${pageContext.request.contextPath}/course/get?id=${user.course.id}" class="button"
+                   role="button" tabindex="0">${user.course.title}</a>
+            </td>
+            <td>
+                <ul>
+                    <c:choose>
+                        <c:when test="${not empty user.solutions}">
+                            <c:forEach items="${user.solutions}" var="solution">
+                                <li><a href="${pageContext.request.contextPath}/solution/get?id=${solution.id}"
+                                       class="button" role="button" tabindex="0">${solution.homework.title}</a><br>
+                                </li>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <p>No solutions yet</p>
+                        </c:otherwise>
+                    </c:choose>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
