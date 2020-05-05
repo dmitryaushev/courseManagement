@@ -3,9 +3,10 @@ package com.courses.management.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(path = "/user/*")
@@ -40,9 +41,35 @@ public class UserController {
         try {
             model.addAttribute("user", users.getByEmail(email));
             return "user_details";
-        } catch (UserNotExistError e) {
+        } catch (UserNotExistException e) {
             model.addAttribute("error", e.getMessage());
             return "find_user";
         }
+    }
+
+    @GetMapping(path = "/registration")
+    public String registration(Model model) {
+        return "registration";
+    }
+
+    @PostMapping(path = "/registration")
+    public String registerUser(@ModelAttribute("userForm") @Valid User user, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            return "registration";
+        }
+
+        try {
+            users.registerUser(user);
+            return "login";
+        } catch (UserAlreadyExistsException e) {
+            model.addAttribute("message", "An account for that username already exists.");
+            return "registration";
+        }
+    }
+
+    @ModelAttribute("userForm")
+    public User getDefaultUser() {
+        return new User();
     }
 }

@@ -7,6 +7,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ public class User extends BaseEntity {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
     private UserRole userRole;
     private UserStatus status;
     private Course course;
@@ -26,6 +29,7 @@ public class User extends BaseEntity {
 
     }
 
+    @NotEmpty
     @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
@@ -35,6 +39,7 @@ public class User extends BaseEntity {
         this.firstName = firstName;
     }
 
+    @NotEmpty
     @Column(name = "last_name")
     public String getLastName() {
         return lastName;
@@ -44,6 +49,7 @@ public class User extends BaseEntity {
         this.lastName = lastName;
     }
 
+    @Email
     @Column(name = "email")
     public String getEmail() {
         return email;
@@ -51,6 +57,16 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @NotEmpty
+    @Column(name = "password")
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Column(name = "user_role")

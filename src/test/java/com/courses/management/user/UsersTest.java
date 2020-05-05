@@ -6,7 +6,7 @@ public class UsersTest {
         user.setFirstName("Dmitry");
         user.setLastName("Aushev");
         user.setEmail("dmitryaushev@gmail.com");
-        user.setUserRole(UserRole.NEWCOMER);
+        user.setUserRole(UserRole.ROLE_NEWCOMER);
         user.setStatus(UserStatus.NOT_ACTIVE);
         return user;
     }
