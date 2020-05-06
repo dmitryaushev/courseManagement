@@ -29,7 +29,7 @@ public class User extends BaseEntity {
 
     }
 
-    @NotEmpty
+    @NotEmpty(message = "must not be empty")
     @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
@@ -39,7 +39,7 @@ public class User extends BaseEntity {
         this.firstName = firstName;
     }
 
-    @NotEmpty
+    @NotEmpty(message = "must not be empty")
     @Column(name = "last_name")
     public String getLastName() {
         return lastName;
@@ -50,6 +50,7 @@ public class User extends BaseEntity {
     }
 
     @Email
+    @NotEmpty(message = "must not be empty")
     @Column(name = "email")
     public String getEmail() {
         return email;
@@ -59,7 +60,7 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    @NotEmpty
+    @NotEmpty(message = "must not be empty")
     @Column(name = "password")
     public String getPassword() {
         return password;

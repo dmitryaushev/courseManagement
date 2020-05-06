@@ -21,13 +21,13 @@ public class Users {
         this.encoder = encoder;
     }
 
-    public User getById(int id) {
+    public User getUser(int id) {
         LOG.debug(String.format("getUser: id=%d", id));
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(String.format("User with id %s not found", id)));
     }
 
-    public User getByEmail(String email) {
+    public User getUser(String email) {
         LOG.debug(String.format("getUser: email=%s", email));
         return userRepository.getByEmail(email)
                 .orElseThrow(() -> new UserNotExistException(String.format("User with email %s not exist", email)));

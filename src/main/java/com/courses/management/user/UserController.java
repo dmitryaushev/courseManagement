@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping(path = "/get")
     public String getUser(@RequestParam("id") Integer id, Model model) {
-        model.addAttribute("user", users.getById(id));
+        model.addAttribute("user", users.getUser(id));
         return "user_details";
     }
 
@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping(path = "/find")
     public String findUser(@RequestParam("email") String email, Model model) {
         try {
-            model.addAttribute("user", users.getByEmail(email));
+            model.addAttribute("user", users.getUser(email));
             return "user_details";
         } catch (UserNotExistException e) {
             model.addAttribute("error", e.getMessage());
@@ -61,7 +61,7 @@ public class UserController {
 
         try {
             users.registerUser(user);
-            return "login";
+            return "redirect:login";
         } catch (UserAlreadyExistsException e) {
             model.addAttribute("message", "An account for that username already exists.");
             return "registration";
