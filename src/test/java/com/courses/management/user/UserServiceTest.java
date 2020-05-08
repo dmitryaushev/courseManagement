@@ -1,0 +1,58 @@
+package com.courses.management.user;
+
+import com.courses.management.common.TestConfig;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+public class UserServiceTest {
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @Autowired
+    private Users userService;
+
+    @Test
+    public void testGetAllUsersShouldReturnEmptyList() {
+        //given
+        when(userRepository.findAll()).thenReturn(List.of());
+        //when
+        List<User> users = this.userService.getAll();
+        //then
+        assertThat(users.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testRegisterUserShouldReturnUser() {
+        //given
+        User user = UserHelper.createUser(UserHelper.FIRST_USER_FIRST_NAME, UserHelper.FIRST_USER_LAST_NAME,
+                UserHelper.FIRST_USER_EMAIL, UserHelper.FIRST_USER_PASSWORD);
+        //when
+        this.userService.registerUser(user);
+        //then
+        assertThat(user.getPassword()).isNotEqualTo(UserHelper.FIRST_USER_PASSWORD);
+        assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
+    }
+
+    @Test(expected = UserAlreadyExistsException.class)
+    public void testRegisterUserShouldReturnException() {
+        //given
+        User user = UserHelper.createUser(UserHelper.FIRST_USER_FIRST_NAME, UserHelper.FIRST_USER_LAST_NAME,
+                UserHelper.FIRST_USER_EMAIL, UserHelper.FIRST_USER_PASSWORD);
+        when(userRepository.getByEmail(UserHelper.FIRST_USER_EMAIL)).thenReturn(Optional.of(user));
+        //when
+        this.userService.registerUser(user);
+    }
+}
