@@ -1,14 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
     <title>Users</title>
-    <style>
-        <%@include file="/view/css/style.css" %>
-    </style>
+    <link href="${contextPath}/resources/css/style.css" rel="stylesheet"/>
 </head>
 <body>
-<c:import url="/view/navibar.jsp"/>
+<c:import url="${contextPath}/WEB-INF/view/navibar.jsp"/>
 <c:if test="${not empty users}">
     <table class="zui-table myform">
         <thead>
@@ -29,8 +28,10 @@
                         ${user.email}
                 </td>
                 <td>
-                    <a href="${pageContext.request.contextPath}/course/get?id=${user.course.id}" class="button"
-                       role="button" tabindex="0">${user.course.title}</a>
+                    <c:if test="${not empty user.course}">
+                        <a href="${pageContext.request.contextPath}/course/get?id=${user.course.id}" class="button"
+                           role="button" tabindex="0">${user.course.title}</a>
+                    </c:if>
                 </td>
                 <td>
                     <a href="${pageContext.request.contextPath}/user/get?id=${user.id}" class="button" role="button"

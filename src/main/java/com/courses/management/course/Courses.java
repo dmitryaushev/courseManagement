@@ -2,18 +2,19 @@ package com.courses.management.course;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+@Service
 public class Courses {
 
     private static final Logger LOG = LogManager.getLogger(Courses.class);
     private CourseRepository courseRepository;
 
-    public Courses() {
-    }
-
+    @Autowired
     public Courses(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }

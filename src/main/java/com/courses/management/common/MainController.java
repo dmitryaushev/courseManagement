@@ -12,12 +12,12 @@ import java.util.Objects;
 @RequestMapping(path = "/")
 public class MainController {
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "/index")
     public String goGet() {
         return "index";
     }
 
-    @PostMapping(path = "/")
+    @PostMapping(path = "/index")
     public String doPost() {
         return "index";
     }

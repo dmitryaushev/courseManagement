@@ -1,15 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Show Courses</title>
-    <style>
-        <%@include file="css/style.css" %>
-    </style>
+    <link href="${contextPath}/resources/css/style.css" rel="stylesheet"/>
 </head>
 <body>
-<c:import url="navibar.jsp"/>
+<c:import url="${contextPath}/WEB-INF/view/navibar.jsp"/>
 <c:choose>
     <c:when test="${not empty courses}">
         <table class="zui-table myform">
