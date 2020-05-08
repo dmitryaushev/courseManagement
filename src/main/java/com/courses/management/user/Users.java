@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class Users {
+public class Users implements UserService{
 
     private static final Logger LOG = LogManager.getLogger(Users.class);
 
@@ -26,23 +26,27 @@ public class Users {
         this.encoder = encoder;
     }
 
+    @Override
     public User getUser(int id) {
         LOG.debug(String.format("getUser: id=%d", id));
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotExistException(String.format("User with id %s not found", id)));
     }
 
+    @Override
     public User getUser(String email) {
         LOG.debug(String.format("getUser: email=%s", email));
         return userRepository.getByEmail(email)
                 .orElseThrow(() -> new UserNotExistException(String.format("User with email %s not exist", email)));
     }
 
-    public List<User> getAll() {
+    @Override
+    public List<User> getAllUsers() {
         LOG.debug("getAllUsers: ");
         return userRepository.findAll();
     }
 
+    @Override
     public void registerUser(User user) {
 
         if (emailExist(user.getEmail())) {

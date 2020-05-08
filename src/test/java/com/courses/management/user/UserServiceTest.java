@@ -29,7 +29,7 @@ public class UserServiceTest {
         //given
         when(userRepository.findAll()).thenReturn(List.of());
         //when
-        List<User> users = this.userService.getAll();
+        List<User> users = this.userService.getAllUsers();
         //then
         assertThat(users.size()).isEqualTo(0);
     }

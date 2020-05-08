@@ -21,11 +21,11 @@ import java.util.Objects;
 @RequestMapping(path = "/course/*")
 public class CourseController {
 
-    private Courses courses;
+    private CourseService courses;
     private Users users;
 
     @Autowired
-    public void setCourses(Courses courses, Users users) {
+    public void setCourses(CourseService courses, Users users) {
         this.courses = courses;
         this.users = users;
     }

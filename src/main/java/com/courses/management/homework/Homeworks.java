@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class Homeworks {
+public class Homeworks implements HomeworkService{
 
     private static final Logger LOG = LogManager.getLogger(Homeworks.class);
     private HomeworkRepository homeworkRepository;
@@ -27,12 +27,14 @@ public class Homeworks {
         this.courseRepository = courseRepository;
     }
 
-    public Homework get(int id) {
+    @Override
+    public Homework getHomework(int id) {
         LOG.debug(String.format("getHomework: id=%d", id));
         return homeworkRepository.findById(id).orElse(new Homework());
     }
 
-    public void uploadFile(List<FileItem> items, Integer courseId) {
+    @Override
+    public void uploadFile(List<FileItem> items, int courseId) {
 
         LOG.debug(String.format("uploadFile: courseId=%d", courseId));
         Course course = courseRepository.getOne(courseId);

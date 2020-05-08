@@ -42,7 +42,7 @@ public class HomeworkController {
 
     @GetMapping(path = "/get")
     public void previewHomework(@RequestParam(name = "id") Integer id, HttpServletResponse response) throws IOException {
-        Homework homework = homeworks.get(id);
+        Homework homework = homeworks.getHomework(id);
         File file = new File(homework.getPath());
         if (!file.exists()) {
             throw new FileNotFoundException("No file found");
