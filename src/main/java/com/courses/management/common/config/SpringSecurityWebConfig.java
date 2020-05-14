@@ -1,4 +1,4 @@
-package com.courses.management.config;
+package com.courses.management.common.config;
 
 import com.courses.management.user.auth.UsersDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
