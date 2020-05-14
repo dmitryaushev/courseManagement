@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class Users implements UserService{
+public class UserServiceImpl implements UserService {
 
-    private static final Logger LOG = LogManager.getLogger(Users.class);
+    private static final Logger LOG = LogManager.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder encoder;
 
     @Autowired
-    public Users(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

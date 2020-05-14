@@ -1,7 +1,8 @@
 package com.courses.management.common;
 
 import com.courses.management.user.UserRepository;
-import com.courses.management.user.Users;
+import com.courses.management.user.UserService;
+import com.courses.management.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,7 @@ public class TestConfig {
     }
 
     @Bean
-    public Users users() {
-        return new Users(userRepository);
+    public UserService userService() {
+        return new UserServiceImpl(userRepository);
     }
 }

@@ -22,7 +22,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private Users userService;
+    private UserService userService;
 
     @Test
     public void testGetAllUsersShouldReturnEmptyList() {

@@ -2,7 +2,7 @@ package com.courses.management.course;
 
 import com.courses.management.user.User;
 import com.courses.management.user.UserRole;
-import com.courses.management.user.Users;
+import com.courses.management.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,13 +21,17 @@ import java.util.Objects;
 @RequestMapping(path = "/course/*")
 public class CourseController {
 
-    private CourseService courses;
-    private Users users;
+    private CourseService courseService;
+    private UserService userService;
 
     @Autowired
-    public void setCourses(CourseService courses, Users users) {
-        this.courses = courses;
-        this.users = users;
+    public void setCourseService(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping(path = "showCourses")
@@ -35,9 +39,9 @@ public class CourseController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         GrantedAuthority authority = userDetails.getAuthorities().iterator().next();
         if (authority.getAuthority().equals(UserRole.ROLE_ADMIN.getRole())) {
-            model.addAttribute("courses", courses.showCourses());
+            model.addAttribute("courses", courseService.showCourses());
         } else {
-            User user = users.getUser(userDetails.getUsername());
+            User user = userService.getUser(userDetails.getUsername());
             if (Objects.nonNull(user.getCourse())) {
                 model.addAttribute("courses", List.of(user.getCourse()));
             }
@@ -47,7 +51,7 @@ public class CourseController {
 
     @GetMapping(path = "/get")
     public String getCourse(@RequestParam(name = "id") String id, Model model) {
-        model.addAttribute("course", courses.getById(Integer.parseInt(id)));
+        model.addAttribute("course", courseService.getById(Integer.parseInt(id)));
         return "course_details";
     }
 
@@ -66,7 +70,7 @@ public class CourseController {
             return "create_course";
         }
         try {
-            courses.createCourse(course);
+            courseService.createCourse(course);
             model.addAttribute("course_title", course.getTitle());
             return "course_created";
         } catch (CourseAlreadyExistError e) {

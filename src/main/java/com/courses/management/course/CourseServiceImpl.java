@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class Courses implements CourseService{
+public class CourseServiceImpl implements CourseService {
 
-    private static final Logger LOG = LogManager.getLogger(Courses.class);
+    private static final Logger LOG = LogManager.getLogger(CourseServiceImpl.class);
     private CourseRepository courseRepository;
 
     @Autowired
-    public Courses(CourseRepository courseRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }
 
@@ -40,7 +40,7 @@ public class Courses implements CourseService{
     @Override
     public void createCourse(Course course) {
         LOG.debug(String.format("createCourse: courseTitle=%s", course.getTitle()));
-        if (Objects.nonNull(getByTitle(course.getTitle()))){
+        if (Objects.nonNull(getByTitle(course.getTitle()))) {
             throw new CourseAlreadyExistError(String.format("course with title %s already exists", course.getTitle()));
         }
         courseRepository.save(course);
